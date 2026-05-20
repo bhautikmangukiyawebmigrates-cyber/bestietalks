@@ -1,18 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
-
 import "./App.css";
 import Login from "./Login";
 import EmojiPicker from "emoji-picker-react";
 
-// ✅ Production socket
+// ================= SOCKET =================
 const socket = io("https://bestietalks-server.onrender.com", {
-  transports: ["websocket", "polling"]
+  transports: ["websocket", "polling"],
 });
 
 function App() {
-
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -23,9 +21,7 @@ function App() {
   const [typingStatus, setTypingStatus] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  // ======================
-  // LOAD MESSAGES
-  // ======================
+  // ================= LOAD MESSAGES =================
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -41,22 +37,20 @@ function App() {
     }
   };
 
-  // ======================
-  // RECEIVE MESSAGES
-  // ======================
+  // ================= RECEIVE MESSAGES =================
   useEffect(() => {
-    socket.on("receive_message", (data) => {
+    const handler = (data) => {
       setChat((prev) => [...prev, data]);
-    });
+    };
 
-    return () => socket.off("receive_message");
+    socket.on("receive_message", handler);
+
+    return () => socket.off("receive_message", handler);
   }, []);
 
-  // ======================
-  // ONLINE STATUS
-  // ======================
+  // ================= ONLINE STATUS =================
   useEffect(() => {
-    socket.on("online_users", (data) => {
+    const handler = (data) => {
       if (data.user !== user) {
         setOnlineStatus(
           data.status === "online"
@@ -64,16 +58,16 @@ function App() {
             : `${data.user} is Offline ⚫`
         );
       }
-    });
+    };
 
-    return () => socket.off("online_users");
+    socket.on("online_users", handler);
+
+    return () => socket.off("online_users", handler);
   }, [user]);
 
-  // ======================
-  // TYPING
-  // ======================
+  // ================= TYPING =================
   useEffect(() => {
-    socket.on("show_typing", (data) => setTypingStatus(data));
+    socket.on("show_typing", setTypingStatus);
     socket.on("hide_typing", () => setTypingStatus(""));
 
     return () => {
@@ -82,33 +76,27 @@ function App() {
     };
   }, []);
 
-  // ======================
-  // USER ONLINE
-  // ======================
+  // ================= USER ONLINE =================
   useEffect(() => {
     if (user) socket.emit("user_online", user);
   }, [user]);
 
-  // ======================
-  // TIME
-  // ======================
+  // ================= TIME =================
   const getCurrentTime = () => {
     return new Date().toLocaleTimeString([], {
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
     });
   };
 
-  // ======================
-  // SEND MESSAGE
-  // ======================
+  // ================= SEND MESSAGE =================
   const sendMessage = () => {
     if (!message.trim()) return;
 
     const newMessage = {
       text: message,
       sender: user,
-      time: getCurrentTime()
+      time: getCurrentTime(),
     };
 
     socket.emit("send_message", newMessage);
@@ -117,18 +105,20 @@ function App() {
     setMessage("");
     setShowEmojiPicker(false);
 
-    // ✅ KEEP KEYBOARD OPEN (mobile fix)
+    // ✅ KEEP KEYBOARD OPEN
     setTimeout(() => {
       inputRef.current?.focus();
     }, 50);
   };
 
-  // ======================
-  // TYPING
-  // ======================
+  // ================= TYPING =================
   const handleTyping = (e) => {
     setMessage(e.target.value);
     socket.emit("typing", user);
+
+    // auto textarea grow
+    e.target.style.height = "auto";
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
 
     clearTimeout(window.typingTimer);
     window.typingTimer = setTimeout(() => {
@@ -136,18 +126,17 @@ function App() {
     }, 800);
   };
 
-  // ======================
-  // AUTO SCROLL
-  // ======================
+  // ================= EMOJI =================
+  const handleEmojiClick = (emojiData) => {
+    setMessage((prev) => prev + emojiData.emoji);
+  };
+
+  // ================= AUTO SCROLL =================
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth"
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  // ======================
-  // ENTER SEND
-  // ======================
+  // ================= ENTER SEND =================
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -155,16 +144,11 @@ function App() {
     }
   };
 
-  // ======================
-  // LOGIN
-  // ======================
-  if (!user) {
-    return <Login setUser={setUser} />;
-  }
+  // ================= LOGIN =================
+  if (!user) return <Login setUser={setUser} />;
 
   return (
     <div className="app">
-
       <div className="chat-container">
 
         {/* HEADER */}
@@ -173,9 +157,8 @@ function App() {
           <p>{onlineStatus}</p>
         </div>
 
-        {/* MESSAGES */}
+        {/* CHAT */}
         <div className="chat-messages">
-
           {typingStatus && (
             <div className="typing-box">{typingStatus}</div>
           )}
@@ -184,9 +167,7 @@ function App() {
             <div
               key={i}
               className={
-                msg.sender === user
-                  ? "message sent"
-                  : "message received"
+                msg.sender === user ? "message sent" : "message received"
               }
             >
               <p>{msg.text}</p>
@@ -201,9 +182,7 @@ function App() {
         {showEmojiPicker && (
           <div className="emoji-picker">
             <EmojiPicker
-              onEmojiClick={(emoji) =>
-                setMessage((prev) => prev + emoji.emoji)
-              }
+              onEmojiClick={handleEmojiClick}
               theme="dark"
             />
           </div>
@@ -226,6 +205,10 @@ function App() {
             onChange={handleTyping}
             onKeyDown={handleKeyPress}
             rows="1"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="sentences"
+            spellCheck="true"
           />
 
           <button onClick={sendMessage}>➤</button>
@@ -233,7 +216,6 @@ function App() {
         </div>
 
       </div>
-
     </div>
   );
 }

@@ -554,3 +554,16 @@ body{
     height:44px;
   }
 }
+
+.chat-container {
+  height: 100dvh; /* FIX KEYBOARD ISSUE */
+}
+
+.chat-input {
+  position: sticky;
+  bottom: 0;
+}
+
+body {
+  overscroll-behavior: none;
+}
