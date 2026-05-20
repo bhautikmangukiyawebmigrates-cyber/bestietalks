@@ -1,704 +1,354 @@
-/* ==========================================================================
-   PREMIUM COUPLE CHAT UI 💖
-   Modern • Glassmorphism • Neon • iOS Inspired
-   ========================================================================== */
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* ================= SYSTEM CONFIG & VARIABLES ================= */
+:root {
+  --bg-main: #0B0E14;
+  --bg-surface: #161B26;
+  --bg-surface-elevated: #212836;
+  
+  /* Romantic Premium Gradient Accents */
+  --primary-gradient: linear-gradient(135deg, #FF4B72 0%, #FF7396 100%);
+  --secondary-gradient: linear-gradient(135deg, #2E3748 0%, #3B465C 100%);
+  --accent-glow: rgba(255, 75, 114, 0.3);
+  
+  /* Text Colors */
+  --text-main: #F3F4F6;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+  
+  /* Spacing Definitions */
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-:root{
-
-  /* COLORS */
-
-  --bg:#050505;
-  --bg2:#0f0f10;
-
-  --glass:rgba(255,255,255,.06);
-
-  --header:rgba(18,18,18,.55);
-
-  --input:rgba(25,25,25,.72);
-
-  --sent1:#ff4ecd;
-  --sent2:#7d5cff;
-
-  --received:rgba(255,255,255,.06);
-
-  --white:#ffffff;
-
-  --text:#d6d6d6;
-
-  --online:#00ffb7;
-
-  /* SHADOWS */
-
-  --pink-shadow:
-  0 10px 30px rgba(255,78,205,.22);
-
-  --dark-shadow:
-  0 10px 40px rgba(0,0,0,.35);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ==========================================================================
-   BODY
-   ========================================================================== */
-
-body{
-
-  background:
-
-  radial-gradient(
-    circle at top left,
-    rgba(255,78,205,.18),
-    transparent 28%
-  ),
-
-  radial-gradient(
-    circle at bottom right,
-    rgba(0,195,255,.15),
-    transparent 28%
-  ),
-
-  linear-gradient(
-    180deg,
-    #050505,
-    #111111
-  );
-
-  background-attachment:fixed;
-
-  font-family:
-  -apple-system,
-  BlinkMacSystemFont,
-  "SF Pro Display",
-  "Segoe UI",
-  sans-serif;
-
-  overflow:hidden;
-
-  color:white;
-
-  overscroll-behavior:none;
+body, html, #root {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Stops browser bouncing/rubber-banding */
+  position: fixed;
 }
 
-/* ==========================================================================
-   APP
-   ========================================================================== */
-
-.app{
-
-  width:100%;
-  height:100dvh;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* ================= LOGIN PAGE ================= */
+.login-page {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(circle at top right, rgba(255, 75, 114, 0.12), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 40%);
 }
 
-/* ==========================================================================
-   CHAT CONTAINER
-   ========================================================================== */
-
-.chat-container{
-
-  width:100%;
-  max-width:430px;
-  height:100dvh;
-
-  display:flex;
-  flex-direction:column;
-
-  position:relative;
-
-  overflow:hidden;
-
-  background:
-  rgba(15,15,15,.45);
-
-  backdrop-filter:blur(28px);
-
-  border-left:
-  1px solid rgba(255,255,255,.06);
-
-  border-right:
-  1px solid rgba(255,255,255,.06);
+.login-box {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* ==========================================================================
-   HEADER
-   ========================================================================== */
-
-.chat-header{
-
-  padding:16px;
-
-  background:
-  rgba(20,20,20,.45);
-
-  backdrop-filter:blur(18px);
-
-  border-bottom:
-  1px solid rgba(255,255,255,.05);
-
-  position:sticky;
-  top:0;
-
-  z-index:100;
+.login-box h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
-/* USER */
-
-.header-user{
-
-  display:flex;
-  align-items:center;
-
-  gap:12px;
+.login-box input {
+  width: 100%;
+  background: var(--bg-surface-elevated);
+  border: 1.5px solid transparent;
+  color: var(--text-main);
+  padding: 14px 16px;
+  font-size: 16px; /* Prevents iOS auto-zoom on focus */
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
 }
 
-/* AVATAR */
-
-.avatar{
-
-  width:48px;
-  height:48px;
-
-  border-radius:50%;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  font-size:18px;
-  font-weight:700;
-
-  color:white;
-
-  background:
-  linear-gradient(
-    135deg,
-    var(--sent1),
-    var(--sent2)
-  );
-
-  box-shadow:
-  var(--pink-shadow);
+.login-box input:focus {
+  outline: none;
+  border-color: #FF4B72;
+  box-shadow: 0 0 12px rgba(255, 75, 114, 0.2);
 }
 
-.avatar.online{
-
-  box-shadow:
-  0 0 22px rgba(0,255,183,.55);
+.login-box button {
+  width: 100%;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(255, 75, 114, 0.3);
+  transition: transform 0.1s ease;
 }
 
-/* NAME */
-
-.chat-header h3{
-
-  font-size:17px;
-  font-weight:700;
-
-  letter-spacing:.2px;
+.login-box button:active {
+  transform: scale(0.98);
 }
 
-/* STATUS */
-
-.chat-header p{
-
-  margin-top:3px;
-
-  font-size:12px;
-
-  color:var(--online);
+/* ================= MAIN CHAT STRUCTURE ================= */
+.app {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ==========================================================================
-   CHAT AREA
-   ========================================================================== */
-
-.chat-messages{
-
-  flex:1;
-
-  overflow-y:auto;
-
-  padding:18px 14px 12px;
-
-  display:flex;
-  flex-direction:column;
-
-  gap:10px;
-
-  scroll-behavior:smooth;
+.chat-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-/* HIDE SCROLLBAR */
-
-.chat-messages::-webkit-scrollbar{
-  display:none;
+/* ================= HEADER ================= */
+.chat-header {
+  background: rgba(22, 27, 38, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: calc(14px + var(--safe-top)) 16px 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 }
 
-/* ==========================================================================
-   MESSAGE
-   ========================================================================== */
-
-.message{
-
-  max-width:82%;
-
-  padding:12px 15px 9px;
-
-  border-radius:24px;
-
-  position:relative;
-
-  animation:
-  popMessage .28s cubic-bezier(.2,.8,.2,1);
-
-  word-wrap:break-word;
-
-  transition:.2s;
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.message:hover{
-
-  transform:
-  translateY(-2px);
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(255, 75, 114, 0.2);
 }
 
-/* MESSAGE TEXT */
-
-.message p{
-
-  font-size:15px;
-
-  line-height:1.5;
-
-  color:white;
-
-  white-space:pre-wrap;
+/* Status Dot indicators instead of heavy text */
+.avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-surface);
+  background: #10B981; /* Green */
 }
 
-/* SENT */
-
-.sent{
-
-  align-self:flex-end;
-
-  background:
-  linear-gradient(
-    135deg,
-    var(--sent1),
-    var(--sent2)
-  );
-
-  border:
-  1px solid rgba(255,255,255,.08);
-
-  border-bottom-right-radius:8px;
-
-  box-shadow:
-  var(--pink-shadow);
+.header-user h3 {
+  font-size: 16px;
+  font-weight: 600;
 }
 
-/* RECEIVED */
-
-.received{
-
-  align-self:flex-start;
-
-  background:
-  rgba(255,255,255,.06);
-
-  backdrop-filter:blur(16px);
-
-  border:
-  1px solid rgba(255,255,255,.05);
-
-  border-bottom-left-radius:8px;
+.header-user p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
-/* TIME */
-
-.time{
-
-  display:block;
-
-  text-align:right;
-
-  margin-top:4px;
-
-  font-size:10px;
-
-  color:
-  rgba(255,255,255,.7);
+/* ================= MESSAGES WINDOW ================= */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: calc(85px + var(--safe-top)) 16px calc(90px + var(--safe-bottom)) 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Butter-smooth iOS inertia scroll */
 }
 
-/* ==========================================================================
-   MESSAGE ANIMATION
-   ========================================================================== */
-
-@keyframes popMessage{
-
-  0%{
-    opacity:0;
-
-    transform:
-    translateY(10px)
-    scale(.92);
-  }
-
-  100%{
-    opacity:1;
-
-    transform:
-    translateY(0)
-    scale(1);
-  }
+/* Base Bubble Styles */
+.message {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: bubblePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* ==========================================================================
-   TYPING
-   ========================================================================== */
-
-.typing-box{
-
-  font-size:13px;
-
-  color:#6dc8ff;
-
-  padding-left:6px;
-
-  animation:
-  pulse 1.5s infinite;
+@keyframes bubblePop {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes pulse{
-
-  0%,100%{
-    opacity:.4;
-  }
-
-  50%{
-    opacity:1;
-  }
+.message p {
+  font-size: 15px;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
-/* ==========================================================================
-   INPUT AREA
-   ========================================================================== */
-
-.chat-input{
-
-  margin:10px;
-
-  padding:8px 10px;
-
-  display:flex;
-  align-items:flex-end;
-
-  gap:10px;
-
-  border-radius:30px;
-
-  background:
-  rgba(20,20,20,.72);
-
-  backdrop-filter:blur(24px);
-
-  border:
-  1px solid rgba(255,255,255,.06);
-
-  box-shadow:
-  var(--dark-shadow);
-
-  position:sticky;
-  bottom:0;
+.message .time {
+  font-size: 10px;
+  align-self: flex-end;
+  opacity: 0.6;
 }
 
-/* TEXTAREA */
-
-.chat-input textarea{
-
-  flex:1;
-
-  border:none;
-  outline:none;
-  resize:none;
-
-  background:transparent;
-
-  color:white;
-
-  font-size:15px;
-
-  line-height:1.5;
-
-  padding:12px 0;
-
-  max-height:120px;
+/* Sent Messages (You) */
+.message.sent {
+  background: var(--primary-gradient);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(255, 75, 114, 0.15);
 }
 
-/* PLACEHOLDER */
-
-.chat-input textarea::placeholder{
-
-  color:#9fa3aa;
+/* Received Messages (Her) */
+.message.received {
+  background: var(--secondary-gradient);
+  color: var(--text-main);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-/* ==========================================================================
-   EMOJI BUTTON
-   ========================================================================== */
-
-.emoji-btn{
-
-  width:42px;
-  height:42px;
-
-  border:none;
-
-  border-radius:50%;
-
-  background:
-  rgba(255,255,255,.05);
-
-  color:white;
-
-  font-size:20px;
-
-  cursor:pointer;
-
-  transition:.2s;
+/* ================= TYPING INDICATOR ================= */
+.typing-box {
+  background: var(--bg-surface-elevated);
+  color: #FF7396;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  align-self: flex-start;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-bottom-left-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse 1.5s infinite;
 }
 
-.emoji-btn:hover{
-
-  transform:scale(1.08);
-
-  background:
-  rgba(255,255,255,.08);
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
 }
 
-/* ==========================================================================
-   SEND BUTTON
-   ========================================================================== */
-
-.chat-input button{
-
-  width:46px;
-  height:46px;
-
-  border:none;
-
-  border-radius:50%;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  cursor:pointer;
-
-  color:white;
-
-  font-size:18px;
-
-  transition:.2s;
-
-  background:
-  linear-gradient(
-    135deg,
-    var(--sent1),
-    var(--sent2)
-  );
-
-  box-shadow:
-  0 10px 25px rgba(255,78,205,.35);
+/* ================= INPUT PANEL ================= */
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(22, 27, 38, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 12px 14px calc(12px + var(--safe-bottom)) 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 10;
 }
 
-.chat-input button:hover{
-
-  transform:
-  scale(1.05);
+.emoji-btn, .send-btn {
+  background: none;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
-.chat-input button:active{
-
-  transform:
-  scale(.94);
+.emoji-btn {
+  font-size: 24px;
+  height: 40px;
+  width: 40px;
 }
 
-/* ==========================================================================
-   EMOJI PICKER
-   ========================================================================== */
-
-.emoji-picker{
-
-  position:absolute;
-
-  bottom:90px;
-  left:10px;
-
-  z-index:200;
+.send-btn {
+  background: var(--primary-gradient);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(255, 75, 114, 0.2);
 }
 
-/* ==========================================================================
-   LOGIN PAGE
-   ========================================================================== */
-
-.login-page{
-
-  width:100%;
-  height:100dvh;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  padding:20px;
+.emoji-btn:active, .send-btn:active {
+  transform: scale(0.9);
 }
 
-/* LOGIN BOX */
-
-.login-box{
-
-  width:100%;
-  max-width:360px;
-
-  padding:34px 24px;
-
-  border-radius:32px;
-
-  background:
-  rgba(18,18,18,.72);
-
-  backdrop-filter:blur(28px);
-
-  border:
-  1px solid rgba(255,255,255,.06);
-
-  box-shadow:
-  var(--dark-shadow);
-
-  display:flex;
-  flex-direction:column;
+.chat-input-wrapper {
+  flex: 1;
+  background: var(--bg-surface-elevated);
+  border-radius: 20px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* LOGIN TITLE */
-
-.login-box h1{
-
-  text-align:center;
-
-  margin-bottom:28px;
-
-  font-size:30px;
-  font-weight:700;
-
-  background:
-  linear-gradient(
-    135deg,
-    #ff4ecd,
-    #7d5cff
-  );
-
-  -webkit-background-clip:text;
-
-  -webkit-text-fill-color:transparent;
+.chat-input-wrapper textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-size: 16px; /* Native feel, avoids auto-zoom on mobile safari */
+  padding: 8px 0;
+  resize: none;
+  max-height: 120px;
+  line-height: 20px;
 }
 
-/* INPUT */
-
-.login-box input{
-
-  margin-bottom:16px;
-
-  padding:15px 16px;
-
-  border:none;
-  outline:none;
-
-  border-radius:16px;
-
-  background:
-  rgba(255,255,255,.05);
-
-  color:white;
-
-  font-size:15px;
+/* ================= EMOJI CONTAINER FIXED FOR MOBILE ================= */
+.emoji-picker {
+  position: absolute;
+  bottom: calc(65px + var(--safe-bottom));
+  left: 14px;
+  right: 14px;
+  z-index: 100;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.3);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
-.login-box input:focus{
-
-  border:
-  1px solid rgba(255,78,205,.45);
-
-  box-shadow:
-  0 0 0 4px rgba(255,78,205,.12);
-}
-
-.login-box input::placeholder{
-
-  color:#9fa3aa;
-}
-
-/* LOGIN BUTTON */
-
-.login-box button{
-
-  margin-top:8px;
-
-  padding:15px;
-
-  border:none;
-
-  border-radius:18px;
-
-  cursor:pointer;
-
-  color:white;
-
-  font-size:16px;
-  font-weight:600;
-
-  transition:.25s;
-
-  background:
-  linear-gradient(
-    135deg,
-    #ff4ecd,
-    #7d5cff
-  );
-
-  box-shadow:
-  0 10px 24px rgba(255,78,205,.25);
-}
-
-.login-box button:hover{
-
-  transform:
-  translateY(-2px);
-}
-
-/* ==========================================================================
-   MOBILE
-   ========================================================================== */
-
-@media(max-width:600px){
-
-  .chat-container{
-    max-width:100%;
-  }
-
-  .message{
-    max-width:87%;
-  }
-
-  .chat-input button{
-
-    width:44px;
-    height:44px;
-  }
+.epr-main {
+  border: none !important;
+  background-color: var(--bg-surface) !important;
+  width: 100% !important;
 }
