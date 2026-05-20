@@ -7,7 +7,11 @@ import Login from "./Login";
 
 import EmojiPicker from "emoji-picker-react";
 
-const socket = io("http://bestietalks-server.onrender.com/");
+// const socket = io("http://bestietalks-server.onrender.com/");
+
+const socket = io("https://bestietalks-server.onrender.com", {
+  transports: ["websocket", "polling"]
+});
 
 function App() {
 
