@@ -7,7 +7,7 @@ import Login from "./Login";
 
 import EmojiPicker from "emoji-picker-react";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://bestietalks-server.onrender.com/");
 
 function App() {
 
@@ -37,7 +37,7 @@ function App() {
     try {
 
       const response = await axios.get(
-        "http://localhost:5000/messages"
+        "http://bestietalks-server.onrender.com/messages"
       );
 
       setChat(response.data);
