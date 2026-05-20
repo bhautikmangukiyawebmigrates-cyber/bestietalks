@@ -4,164 +4,106 @@ import axios from "axios";
 
 import "./App.css";
 import Login from "./Login";
-
 import EmojiPicker from "emoji-picker-react";
 
-// const socket = io("http://bestietalks-server.onrender.com/");
-
+// ✅ Production socket
 const socket = io("https://bestietalks-server.onrender.com", {
   transports: ["websocket", "polling"]
 });
 
 function App() {
 
-  const [user, setUser] = useState("");
-
-  const [message, setMessage] = useState("");
-
-  const [chat, setChat] = useState([]);
-
-  const [onlineStatus, setOnlineStatus] = useState("");
-
-  const [typingStatus, setTypingStatus] = useState("");
-
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
+  const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Load old messages
+  const [user, setUser] = useState("");
+  const [message, setMessage] = useState("");
+  const [chat, setChat] = useState([]);
+  const [onlineStatus, setOnlineStatus] = useState("");
+  const [typingStatus, setTypingStatus] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // ======================
+  // LOAD MESSAGES
+  // ======================
   useEffect(() => {
-
     fetchMessages();
-
   }, []);
 
   const fetchMessages = async () => {
-
     try {
-
-      const response = await axios.get(
-        "http://bestietalks-server.onrender.com/messages"
+      const res = await axios.get(
+        "https://bestietalks-server.onrender.com/messages"
       );
-
-      setChat(response.data);
-
-    } catch (error) {
-
-      console.log(error);
-
+      setChat(res.data);
+    } catch (err) {
+      console.log(err);
     }
-
   };
 
-  // Receive live messages
+  // ======================
+  // RECEIVE MESSAGES
+  // ======================
   useEffect(() => {
-
     socket.on("receive_message", (data) => {
-
       setChat((prev) => [...prev, data]);
-
     });
 
-    return () => {
-
-      socket.off("receive_message");
-
-    };
-
+    return () => socket.off("receive_message");
   }, []);
 
-  // Online status
+  // ======================
+  // ONLINE STATUS
+  // ======================
   useEffect(() => {
-
     socket.on("online_users", (data) => {
-
       if (data.user !== user) {
-
-        if (data.status === "online") {
-
-          setOnlineStatus(`${data.user} is Online 🟢`);
-
-        } else {
-
-          setOnlineStatus(`${data.user} is Offline ⚫`);
-
-        }
-
+        setOnlineStatus(
+          data.status === "online"
+            ? `${data.user} is Online 🟢`
+            : `${data.user} is Offline ⚫`
+        );
       }
-
     });
 
-    return () => {
-
-      socket.off("online_users");
-
-    };
-
+    return () => socket.off("online_users");
   }, [user]);
 
-  // Typing listener
+  // ======================
+  // TYPING
+  // ======================
   useEffect(() => {
-
-    socket.on("show_typing", (data) => {
-
-      setTypingStatus(data);
-
-    });
-
-    socket.on("hide_typing", () => {
-
-      setTypingStatus("");
-
-    });
+    socket.on("show_typing", (data) => setTypingStatus(data));
+    socket.on("hide_typing", () => setTypingStatus(""));
 
     return () => {
-
       socket.off("show_typing");
       socket.off("hide_typing");
-
     };
-
   }, []);
 
-  // User online
+  // ======================
+  // USER ONLINE
+  // ======================
   useEffect(() => {
-
-    if (user) {
-
-      socket.emit("user_online", user);
-
-    }
-
+    if (user) socket.emit("user_online", user);
   }, [user]);
 
-  // Emoji Click
-  const handleEmojiClick = (emojiData) => {
-
-    setMessage((prev) =>
-      prev + emojiData.emoji
-    );
-
-  };
-
-  // Time
+  // ======================
+  // TIME
+  // ======================
   const getCurrentTime = () => {
-
-    const now = new Date();
-
-    return now.toLocaleTimeString([], {
+    return new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit"
     });
-
   };
 
-  // Send Message
+  // ======================
+  // SEND MESSAGE
+  // ======================
   const sendMessage = () => {
-
-    if (message.trim() === "") {
-      return;
-    }
+    if (!message.trim()) return;
 
     const newMessage = {
       text: message,
@@ -170,55 +112,54 @@ function App() {
     };
 
     socket.emit("send_message", newMessage);
-
     socket.emit("stop_typing");
 
     setMessage("");
+    setShowEmojiPicker(false);
 
+    // ✅ KEEP KEYBOARD OPEN (mobile fix)
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
   };
 
-  // Typing
+  // ======================
+  // TYPING
+  // ======================
   const handleTyping = (e) => {
-
     setMessage(e.target.value);
-
     socket.emit("typing", user);
 
-    setTimeout(() => {
-
+    clearTimeout(window.typingTimer);
+    window.typingTimer = setTimeout(() => {
       socket.emit("stop_typing");
-
-    }, 1000);
-
+    }, 800);
   };
 
-  // Auto Scroll
+  // ======================
+  // AUTO SCROLL
+  // ======================
   useEffect(() => {
-
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth"
     });
-
   }, [chat]);
 
-  // Enter Send
+  // ======================
+  // ENTER SEND
+  // ======================
   const handleKeyPress = (e) => {
-
     if (e.key === "Enter" && !e.shiftKey) {
-
       e.preventDefault();
-
       sendMessage();
-
     }
-
   };
 
-  // Login Page
+  // ======================
+  // LOGIN
+  // ======================
   if (!user) {
-
     return <Login setUser={setUser} />;
-
   }
 
   return (
@@ -226,78 +167,60 @@ function App() {
 
       <div className="chat-container">
 
+        {/* HEADER */}
         <div className="chat-header">
-
-          <h3>
-            {user} ❤️
-          </h3>
-
-          <p>
-            {onlineStatus}
-          </p>
-
+          <h3>{user} ❤️</h3>
+          <p>{onlineStatus}</p>
         </div>
 
+        {/* MESSAGES */}
         <div className="chat-messages">
 
           {typingStatus && (
-
-            <div className="typing-box">
-              {typingStatus}
-            </div>
-
+            <div className="typing-box">{typingStatus}</div>
           )}
 
-          {chat.map((msg, index) => (
-
+          {chat.map((msg, i) => (
             <div
-              key={index}
+              key={i}
               className={
                 msg.sender === user
                   ? "message sent"
                   : "message received"
               }
             >
-
               <p>{msg.text}</p>
-
-              <span className="time">
-                {msg.time}
-              </span>
-
+              <span className="time">{msg.time}</span>
             </div>
-
           ))}
 
-          <div ref={messagesEndRef}></div>
-
+          <div ref={messagesEndRef} />
         </div>
 
+        {/* EMOJI */}
         {showEmojiPicker && (
-
           <div className="emoji-picker">
-
             <EmojiPicker
-              onEmojiClick={handleEmojiClick}
+              onEmojiClick={(emoji) =>
+                setMessage((prev) => prev + emoji.emoji)
+              }
               theme="dark"
             />
-
           </div>
-
         )}
 
+        {/* INPUT */}
         <div className="chat-input">
 
           <button
             className="emoji-btn"
-            onClick={() =>
-              setShowEmojiPicker(!showEmojiPicker)
-            }
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             😀
           </button>
 
           <textarea
+            ref={inputRef}
             placeholder="Type a message"
             value={message}
             onChange={handleTyping}
@@ -305,9 +228,7 @@ function App() {
             rows="1"
           />
 
-          <button onClick={sendMessage}>
-            ➤
-          </button>
+          <button onClick={sendMessage}>➤</button>
 
         </div>
 
